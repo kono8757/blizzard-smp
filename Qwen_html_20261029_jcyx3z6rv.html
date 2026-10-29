@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blizzard SMP — Лучший SMP сервер</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  
+  body {
+    background: #0a0014;
+    color: #e8e0ff;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.3), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(75, 0, 130, 0.4), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(186, 85, 211, 0.15), transparent 60%);
+    z-index: -1;
+    animation: bgMove 15s ease-in-out infinite alternate;
+  }
+
+  @keyframes bgMove {
+    0% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.2) rotate(5deg); }
+  }
+
+  header {
+    background: rgba(10, 0, 20, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid #8a2be2;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(138, 43, 226, 0.4);
+  }
+
+  .logo {
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #b388ff, #8a2be2, #e040fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+    letter-spacing: 2px;
+  }
+
+  .logo span { font-size: 14px; display: block; color: #b388ff; -webkit-text-fill-color: #b388ff; letter-spacing: 1px; }
+
+  nav ul { display: flex; gap: 30px; list-style: none; }
+  nav a {
+    color: #e8e0ff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    position: relative;
+    padding: 5px 0;
+  }
+  nav a:hover { color: #e040fb; text-shadow: 0 0 10px #e040fb; }
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: #e040fb;
+    transition: width 0.3s;
+  }
+  nav a:hover::after { width: 100%; }
+
+  .cart-btn {
+    background: linear-gradient(135deg, #8a2be2, #e040fb);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 0 20px rgba(224, 64, 251, 0.5);
+    transition: all 0.3s;
+  }
+  .cart-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(224, 64, 251, 0.8); }
+
+  .hero {
+    text-align: center;
+    padding: 80px 20px;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: 64px;
+    background: linear-gradient(90deg, #b388ff, #e040fb, #b388ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s linear infinite;
+    background-size: 200% auto;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+  }
+  @keyframes shine {
+    to { background-position: 200% center; }
+  }
+  .hero p {
+    font-size: 22px;
+    color: #b388ff;
+    margin-bottom: 30px;
+    text-shadow: 0 0 15px rgba(179, 136, 255, 0.6);
+  }
+  .hero .badge {
+    display: inline-block;
+    padding: 12px 30px;
+    background: rgba(138, 43, 226, 0.2);
+    border: 2px solid #8a2be2;
+    border-radius: 50px;
+    font-size: 18px;
+    color: #e040fb;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); }
+    50% { box-shadow: 0 0 40px rgba(224, 64, 251, 0.8); }
+  }
+
+  section { padding: 60px 40px; }
+  .section-title {
+    text-align: center;
+    font-size: 42px;
+    margin-bottom: 50px;
+    color: #e040fb;
+    text-shadow: 0 0 20px rgba(224, 64, 251, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+
+  .catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .product-card {
+    background: linear-gradient(135deg, rgba(30, 10, 50, 0.9), rgba(60, 20, 90, 0.7));
+    border: 2px solid #8a2be2;
+    border-radius: 20px;
+    padding: 25px;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(224, 64, 251, 0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s;
+    opacity: 0;
+  }
+  .product-card:hover::before { opacity: 1; top: -100%; left: -100%; }
+  .product-card:hover {
+    transform: translateY(-10px);
+    border-color: #e040fb;
+    box-shadow: 0 15px 40px rgba(138, 43, 226, 0.6);
+  }
+
+  .product-img {
+    width: 100%;
+    height: 160px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 70px;
+    background: linear-gradient(135deg, #2a0845, #6441a5);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+  }
+
+  .product-card h3 {
+    font-size: 26px;
+    color: #e040fb;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .product-card .desc {
+    color: #b388ff;
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .product-card .price {
+    font-size: 32px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px #e040fb;
+  }
+  .product-card .reviews {
+    background: rgba(138, 43, 226, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 13px;
+    color: #d4b3ff;
+    border-left: 3px solid #e040fb;
+  }
+  .product-card .promo {
+    background: linear-gradient(90deg, #e040fb, #8a2be2);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 15px;
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0.7; }
+  }
+
+  .add-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #8a2be2, #e040fb);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+  .add-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(224, 64, 251, 0.8);
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+  }
+  .modal.active { display: flex; }
+  .modal-content {
+    background: linear-gradient(135deg, #1a0533, #2a0845);
+    border: 2px solid #8a2be2;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 0 50px rgba(138, 43, 226, 0.6);
+  }
+  .modal-content h2 {
+    color: #e040fb;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: rgba(138, 43, 226, 0.15);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  .cart-item button {
+    background: #e040fb;
+    border: none;
+    color: white;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .total {
+    font-size: 24px;
+    text-align: center;
+    margin: 20px 0;
+    color: #fff;
+    font-weight: 900;
+  }
+  .close-btn {
+    background: transparent;
+    border: 2px solid #e040fb;
+    color: #e040fb;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    margin-top: 10px;
+    width: 100%;
+    transition: all 0.3s;
+  }
+  .close-btn:hover { background: #e040fb; color: white; }
+
+  .pay-info {
+    background: rgba(224, 64, 251, 0.15);
+    border: 2px dashed #e040fb;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    margin: 20px 0;
+  }
+  .pay-info .card-num {
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 2px;
+    margin: 10px 0;
+    text-shadow: 0 0 10px #e040fb;
+    font-family: 'Courier New', monospace;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    background: rgba(10, 0, 20, 0.9);
+    border-top: 2px solid #8a2be2;
+    color: #b388ff;
+    margin-top: 50px;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 36px; }
+    header { padding: 15px 20px; flex-wrap: wrap; }
+    nav ul { gap: 15px; }
+    section { padding: 40px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    BLIZZARD SMP
+    <span>лучший smp сервер</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#home">Главная</a></li>
+      <li><a href="#catalog">Каталог товаров</a></li>
+      <li><a href="#about">О сервере</a></li>
+    </ul>
+  </nav>
+  <button class="cart-btn" onclick="openCart()">🛒 Корзина (<span id="cart-count">0</span>)</button>
+</header>
+
+<section class="hero" id="home">
+  <h1>Blizzard SMP</h1>
+  <p>Лучший SMP сервер — присоединяйся к нам!</p>
+  <div class="badge">⚡ Онлайн 24/7 ⚡</div>
+</section>
+
+<section id="catalog">
+  <h2 class="section-title">Каталог товаров</h2>
+  <div class="catalog" id="products">
+    <!-- Товары будут добавлены через JavaScript -->
+  </div>
+</section>
+
+<section id="about">
+  <h2 class="section-title">О сервере</h2>
+  <div style="max-width: 800px; margin: 0 auto; text-align: center; font-size: 18px; line-height: 1.8; color: #d4b3ff;">
+    <p>Blizzard SMP — это дружное комьюнити, уникальные ивенты, честная игра и крутая атмосфера. Покупай привилегии и получай эксклюзивные возможности на сервере!</p>
+  </div>
+</section>
+
+<!-- Корзина -->
+<div class="modal" id="cart-modal">
+  <div class="modal-content">
+    <h2>🛒 Ваша корзина</h2>
+    <div id="cart-items"></div>
+    <div class="total">Итого: <span id="cart-total">0</span> ₽</div>
+    <button class="add-btn" onclick="checkout()">Оформить заказ</button>
+    <button class="close-btn" onclick="closeCart()">Закрыть</button>
+  </div>
+</div>
+
+<!-- Оформление -->
+<div class="modal" id="checkout-modal">
+  <div class="modal-content">
+    <h2>💳 Оформление заказа</h2>
+    <p style="text-align: center; margin-bottom: 15px; color: #d4b3ff;">Для завершения покупки переведите сумму на карту:</p>
+    <div class="pay-info">
+      <div>Номер карты (СБП):</div>
+      <div class="card-num">2200 7012 2223 7114</div>
+      <div>Сумма к оплате: <strong id="pay-total">0</strong> ₽</div>
+    </div>
+    <p style="text-align: center; color: #b388ff; font-size: 14px;">После оплаты привилегия будет выдана в течение 10 минут. Напишите в Discord свой ник и скрин оплаты.</p>
+    <button class="close-btn" onclick="closeCheckout()">Закрыть</button>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Blizzard SMP — Лучший SMP сервер</p>
+  <p style="margin-top: 10px; font-size: 14px;">ip: play.blizzardsmp.ru | Discord: discord.gg/blizzard</p>
+</footer>
+
+<script>
+  // Все привилегии с ценами
+  const products = [
+    { 
+      id: 1, 
+      name: 'Стражник', 
+      price: 29, 
+      icon: '🛡️', 
+      desc: 'Базовая привилегия. Цветной ник, 2 дома, доступ к /hat.', 
+      reviews: '⭐ 4.5 — "Отличный старт для новичка!" (Alex_2024)', 
+      promo: 'ХИТ ПРОДАЖ' 
+    },
+    { 
+      id: 2, 
+      name: 'Страж', 
+      price: 50, 
+      icon: '⚔️', 
+      desc: '5 домов, /fly на спавне, кит с алмазной бронёй.', 
+      reviews: '⭐ 4.7 — "Игра стало намного удобнее!" (MaxPlay)', 
+      promo: 'ВЫГОДНО' 
+    },
+    { 
+      id: 3, 
+      name: 'Лорд', 
+      price: 90, 
+      icon: '👑', 
+      desc: '10 домов, /fly везде, /heal, приватный варп.', 
+      reviews: '⭐ 4.8 — "Лорд — это уже серьёзный уровень" (Kirill_pro)', 
+      promo: 'ПОПУЛЯРНОЕ' 
+    },
+    { 
+      id: 4, 
+      name: 'Хранитель', 
+      price: 150, 
+      icon: '🔮', 
+      desc: '15 домов, /god, /feed, эксклюзивные эффекты.', 
+      reviews: '⭐ 4.9 — "Хранитель — топ за свои деньги!" (DimaCraft)', 
+      promo: 'РЕКОМЕНДУЕМ' 
+    },
+    { 
+      id: 5, 
+      name: 'Легенда', 
+      price: 250, 
+      icon: '🌟', 
+      desc: '20 домов, все команды Хранителя + /nick, /vanish.', 
+      reviews: '⭐ 5.0 — "Легенда — это уже элита сервера" (Nikita_best)', 
+      promo: 'ЛЕГЕНДА' 
+    },
+    { 
+      id: 6, 
+      name: 'Император', 
+      price: 450, 
+      icon: '🏰', 
+      desc: '30 домов, полный доступ, уникальный префикс, питомцы.', 
+      reviews: '⭐ 5.0 — "Император — править сервером!" (VladKing)', 
+      promo: 'VIP' 
+    },
+    { 
+      id: 7, 
+      name: 'Элита', 
+      price: 680, 
+      icon: '💎', 
+      desc: 'Безлимит домов, ВСЕ возможности, личный регион, максимальный статус.', 
+      reviews: '⭐ 5.0 — "Элита — это вершина! Все завидуют" (TopPlayer)', 
+      promo: 'МАКСИМУМ' 
+    }
+  ];
+
+  let cart = [];
+
+  // Функция для отображения товаров
+  function renderProducts() {
+    console.log('Рендерим товары:', products.length);
+    const container = document.getElementById('products');
+    
+    if (!container) {
+      console.error('Контейнер #products не найден!');
+      return;
+    }
+    
+    let html = '';
+    products.forEach(p => {
+      html += `
+        <div class="product-card">
+          <div class="product-img">${p.icon}</div>
+          <h3>${p.name}</h3>
+          <p class="desc">${p.desc}</p>
+          <div class="price">${p.price} ₽</div>
+          <div class="reviews">${p.reviews}</div>
+          <div class="promo">🔥 ${p.promo}</div>
+          <button class="add-btn" onclick="addToCart(${p.id})">Добавить в корзину</button>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+    console.log('Товары отрендерены успешно!');
+  }
+
+  function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) {
+      console.error('Товар не найден:', id);
+      return;
+    }
+    
+    cart.push(product);
+    updateCart();
+    
+    // Уведомление
+    const notif = document.createElement('div');
+    notif.textContent = `✓ ${product.name} добавлен в корзину`;
+    notif.style.cssText = 'position:fixed;top:100px;right:20px;background:linear-gradient(135deg,#8a2be2,#e040fb);color:white;padding:15px 25px;border-radius:10px;z-index:2000;font-weight:700;box-shadow:0 0 20px rgba(224,64,251,0.8);animation:slideIn 0.3s';
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 2000);
+  }
+
+  function updateCart() {
+    document.getElementById('cart-count').textContent = cart.length;
+    const items = document.getElementById('cart-items');
+    if (cart.length === 0) {
+      items.innerHTML = '<p style="text-align:center;color:#b388ff;">Корзина пуста</p>';
+    } else {
+      items.innerHTML = cart.map((item, i) => `
+        <div class="cart-item">
+          <span>${item.icon} ${item.name}</span>
+          <span>${item.price} ₽ <button onclick="removeFromCart(${i})">×</button></span>
+        </div>
+      `).join('');
+    }
+    const total = cart.reduce((s, i) => s + i.price, 0);
+    document.getElementById('cart-total').textContent = total;
+    document.getElementById('pay-total').textContent = total;
+  }
+
+  function removeFromCart(i) {
+    cart.splice(i, 1);
+    updateCart();
+  }
+
+  function openCart() {
+    document.getElementById('cart-modal').classList.add('active');
+  }
+  function closeCart() {
+    document.getElementById('cart-modal').classList.remove('active');
+  }
+  function checkout() {
+    if (cart.length === 0) {
+      alert('Корзина пуста!');
+      return;
+    }
+    closeCart();
+    document.getElementById('checkout-modal').classList.add('active');
+  }
+  function closeCheckout() {
+    document.getElementById('checkout-modal').classList.remove('active');
+  }
+
+  // Запускаем при загрузке страницы
+  window.addEventListener('DOMContentLoaded', function() {
+    console.log('Страница загружена, запускаем рендер...');
+    renderProducts();
+    updateCart();
+  });
+</script>
+
+</body>
+</html>
